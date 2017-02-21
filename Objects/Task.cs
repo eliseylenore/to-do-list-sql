@@ -32,9 +32,18 @@ namespace ToDoListSql
            return (idEquality && descriptionEquality && categoryEquality);
          }
      }
+
+     public override int GetHashCode()
+     {
+     return this.GetDescription().GetHashCode();
+    }
     public int GetId()
     {
       return _id;
+    }
+    public int GetCategoryId()
+    {
+      return _categoryId;
     }
     public string GetDescription()
     {
@@ -44,77 +53,7 @@ namespace ToDoListSql
     {
       _description = newDescription;
     }
-    public static List<Task> GetAll()
-    {
-      List<Task> allTasks = new List<Task>{};
 
-      SqlConnection conn = DB.Connection();
-      conn.Open();
-
-      SqlCommand cmd = new SqlCommand("SELECT * FROM tasks;", conn);
-      SqlDataReader rdr = cmd.ExecuteReader();
-
-      while(rdr.Read())
-      {
-        int taskId = rdr.GetInt32(0);
-        string taskDescription = rdr.GetString(1);
-        Task newTask = new Task(taskDescription, taskId);
-        allTasks.Add(newTask);
-      }
-
-      if (rdr != null)
-      {
-        rdr.Close();
-      }
-      if (conn != null)
-      {
-        conn.Close();
-      }
-
-      return allTasks;
-    }
-    public void Save()
-    {
-      SqlConnection conn = DB.Connection();
-      conn.Open();
-
-      SqlCommand cmd = new SqlCommand("INSERT INTO tasks (description) OUTPUT INSERTED.id VALUES (@TaskDescription);", conn);
-
-      SqlParameter descriptionParameter = new SqlParameter();
-      descriptionParameter.ParameterName = "@TaskDescription";
-      descriptionParameter.Value = this.GetDescription();
-      cmd.Parameters.Add(descriptionParameter);
-      SqlDataReader rdr = cmd.ExecuteReader();
-
-      while(rdr.Read())
-      {
-        this._id = rdr.GetInt32(0);
-      }
-      if (rdr != null)
-      {
-        rdr.Close();
-      }
-      if (conn != null)
-      {
-        conn.Close();
-      }
-    }
-    public static void DeleteAll()
-    {
-      SqlConnection conn = DB.Connection();
-      conn.Open();
-      SqlCommand cmd = new SqlCommand("DELETE FROM tasks;", conn);
-      cmd.ExecuteNonQuery();
-      conn.Close();
-    }
-    public int GetCategoryId()
-  {
-    return _categoryId;
-  }
-  public void SetCategoryId(int newCategoryId)
-  {
-    _categoryId = newCategoryId;
-  }
   public static List<Task> GetAll()
   {
     List<Task> AllTasks = new List<Task>{};
@@ -176,6 +115,15 @@ namespace ToDoListSql
       conn.Close();
     }
   }
+
+  public static void DeleteAll()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM tasks;", conn);
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
 
   public static Task Find(int id)
   {

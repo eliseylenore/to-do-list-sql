@@ -96,5 +96,10 @@ namespace ToDoListSql
 
       Assert.Equal(testTaskList, resultTaskList);
     }
+
+    public void Dispose()
+    {
+        Task.DeleteAll();
+    }
   }
 }

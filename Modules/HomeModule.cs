@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.ViewEngines.Razor;
 
-namespace ToDoList
+namespace ToDoListSql
 {
     public class HomeModule : NancyModule
     {
