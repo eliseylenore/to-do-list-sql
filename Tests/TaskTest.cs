@@ -23,61 +23,60 @@ namespace ToDoListSql
       Assert.Equal(0, result);
     }
     [Fact]
-    public void Test_Equal_ReturnsTrueIfDescriptionsAreTheSame()
-    {
-      //Arrange, Act
-      Task firstTask = new Task("Mow the lawn");
-      Task secondTask = new Task("Mow the lawn");
+   public void Test_EqualOverrideTrueForSameDescription()
+   {
+     //Arrange, Act
+     Task firstTask = new Task("Mow the lawn", 1);
+     Task secondTask = new Task("Mow the lawn", 1);
 
-      //Assert
-      Assert.Equal(firstTask, secondTask);
-    }
-    [Fact]
-    public void Test_Save_SavesToDatabase()
-    {
-      //Arrange
-      Task testTask = new Task("Mow the lawn");
+     //Assert
+     Assert.Equal(firstTask, secondTask);
+   }
 
-      //Act
-      testTask.Save();
-      List<Task> result = Task.GetAll();
-      List<Task> testList = new List<Task>{testTask};
+   [Fact]
+   public void Test_Save()
+   {
+     //Arrange
+     Task testTask = new Task("Mow the lawn", 1);
+     testTask.Save();
 
-      //Assert
-      Assert.Equal(testList, result);
-    }
-    public void Dispose()
-    {
-      Task.DeleteAll();
-    }
-    [Fact]
-    public void Test_Save_AssignsIdToObject()
-    {
-      //Arrange
-      Task testTask = new Task("Mow the lawn");
+     //Act
+     List<Task> result = Task.GetAll();
+     List<Task> testList = new List<Task>{testTask};
 
-      //Act
-      testTask.Save();
-      Task savedTask = Task.GetAll()[0];
+     //Assert
+     Assert.Equal(testList, result);
+   }
 
-      int result = savedTask.GetId();
-      int testId = testTask.GetId();
+   [Fact]
+   public void Test_SaveAssignsIdToObject()
+   {
+     //Arrange
+     Task testTask = new Task("Mow the lawn", 1);
+     testTask.Save();
 
-      //Assert
-      Assert.Equal(testId, result);
-    }
-    [Fact]
-    public void Test_Find_FindsTaskInDatabase()
-    {
-      //Arrange
-      Task testTask = new Task("Mow the lawn");
-      testTask.Save();
+     //Act
+     Task savedTask = Task.GetAll()[0];
 
-      //Act
-      Task foundTask = Task.Find(testTask.GetId());
+     int result = savedTask.GetId();
+     int testId = testTask.GetId();
 
-      //Assert
-      Assert.Equal(testTask, foundTask);
-    }
+     //Assert
+     Assert.Equal(testId, result);
+   }
+
+   [Fact]
+   public void Test_FindFindsTaskInDatabase()
+   {
+     //Arrange
+     Task testTask = new Task("Mow the lawn", 1);
+     testTask.Save();
+
+     //Act
+     Task foundTask = Task.Find(testTask.GetId());
+
+     //Assert
+     Assert.Equal(testTask, foundTask);
+   }
   }
 }
