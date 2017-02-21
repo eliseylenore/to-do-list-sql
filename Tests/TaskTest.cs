@@ -26,8 +26,8 @@ namespace ToDoListSql
    public void Test_EqualOverrideTrueForSameDescription()
    {
      //Arrange, Act
-     Task firstTask = new Task("Mow the lawn", 1);
-     Task secondTask = new Task("Mow the lawn", 1);
+     Task firstTask = new Task("Mow the lawn", 1, "01-01-2017");
+     Task secondTask = new Task("Mow the lawn", 1, "01-01-2017");
 
      //Assert
      Assert.Equal(firstTask, secondTask);
@@ -37,7 +37,7 @@ namespace ToDoListSql
    public void Test_Save()
    {
      //Arrange
-     Task testTask = new Task("Mow the lawn", 1);
+     Task testTask = new Task("Mow the lawn", 1, "01-01-2017");
      testTask.Save();
 
      //Act
@@ -52,7 +52,7 @@ namespace ToDoListSql
    public void Test_SaveAssignsIdToObject()
    {
      //Arrange
-     Task testTask = new Task("Mow the lawn", 1);
+     Task testTask = new Task("Mow the lawn", 1, "01-01-2017");
      testTask.Save();
 
      //Act
@@ -69,7 +69,7 @@ namespace ToDoListSql
    public void Test_FindFindsTaskInDatabase()
    {
      //Arrange
-     Task testTask = new Task("Mow the lawn", 1);
+     Task testTask = new Task("Mow the lawn", 1, "01-01-2017");
      testTask.Save();
 
      //Act
@@ -85,9 +85,9 @@ namespace ToDoListSql
       Category testCategory = new Category("Household chores");
       testCategory.Save();
 
-      Task firstTask = new Task("Mow the lawn", testCategory.GetId());
+      Task firstTask = new Task("Mow the lawn", testCategory.GetId(), "01-01-2017");
       firstTask.Save();
-      Task secondTask = new Task("Do the dishes", testCategory.GetId());
+      Task secondTask = new Task("Do the dishes", testCategory.GetId(), "01-01-2017");
       secondTask.Save();
 
 
@@ -95,6 +95,47 @@ namespace ToDoListSql
       List<Task> resultTaskList = testCategory.GetTasks();
 
       Assert.Equal(testTaskList, resultTaskList);
+    }
+
+    [Fact]
+    public void Test_Save_SaveDateTimeAsProperty()
+    {
+        //Arrange
+        Task testTask = new Task("Mow the lawn", 1, "01-01-2017");
+        testTask.Save();
+        string testString = "01-01-2017";
+
+        //Assert
+        Assert.Equal(testTask.GetDueDate(), testString);
+    }
+    [Fact]
+    public void Test_GetTasks_OrdersAllTasksByDate()
+    {
+        Category testCategory = new Category("Household chores");
+        testCategory.Save();
+
+        Task firstTask = new Task("Mow the pool", testCategory.GetId(), "05-02-2017");
+        firstTask.Save();
+        Task secondTask = new Task("Clean the lawn", testCategory.GetId(), "03-15-2017");
+        secondTask.Save();
+        Task thirdTask = new Task("Walk the Cat", testCategory.GetId(), "04-15-2017");
+        thirdTask.Save();
+
+        List<Task> testTaskList = new List<Task> {secondTask, thirdTask, firstTask};
+        List<Task> resultTaskList = Task.GetAll();
+
+        foreach (Task task in testTaskList)
+        {
+            Console.WriteLine("TEST: " + task.GetDescription());
+        }
+
+        foreach (Task task in resultTaskList)
+        {
+            Console.WriteLine("RESULT: " + task.GetDescription());
+        }
+
+
+        Assert.Equal(testTaskList, resultTaskList);
     }
 
     public void Dispose()

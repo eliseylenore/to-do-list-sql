@@ -29,6 +29,10 @@ namespace ToDoListSql
           return (idEquality && nameEquality);
         }
     }
+    public override int GetHashCode()
+    {
+        return this.GetName().GetHashCode();
+   }
 
     public int GetId()
     {
@@ -158,8 +162,9 @@ namespace ToDoListSql
      {
        int taskId = rdr.GetInt32(0);
        string taskDescription = rdr.GetString(1);
+       string taskDueDate = rdr.GetDateTime(3).ToString();
        int taskCategoryId = rdr.GetInt32(2);
-       Task newTask = new Task(taskDescription, taskCategoryId, taskId);
+       Task newTask = new Task(taskDescription, taskCategoryId, taskDueDate, taskId);
        tasks.Add(newTask);
      }
      if (rdr != null)
